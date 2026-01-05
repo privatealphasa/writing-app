@@ -1,33 +1,56 @@
 {
-  "1": [
-    "cat", "dog", "sun", "hat", "pen", "cup", "bed", "bat", "man", "pig",
-    "red", "run", "top", "box", "jam", "ball", "car", "fish", "tree", "cow",
-    "toy", "sky", "egg", "ant", "fox", "map", "fan", "tap", "net", "log",
-    "rat", "cap", "bag", "hat", "pop", "pan", "bun", "dot", "lid", "pot"
-  ],
-  "2": [
-    "apple", "water", "house", "chair", "table", "window", "school",
-    "bread", "plant", "river", "happy", "yellow", "friend", "pencil", "light",
-    "clock", "floor", "shirt", "glass", "train", "phone", "cloud", "plate",
-    "bread", "river", "milk", "stone", "street", "river", "watch", "garden",
-    "river", "street", "lamp", "tree", "couch", "knife", "spoon", "door"
-  ],
-  "3": [
-    "picture", "garden", "teacher", "family", "morning", "playing",
-    "outside", "holiday", "animal", "weather", "market", "window", "mountain",
-    "friendship", "birthday", "holiday", "library", "summer", "winter", "forest",
-    "river", "schoolyard", "adventure", "painting", "dancing", "reading",
-    "travel", "holiday", "classroom", "teacher", "playing", "garden", "picnic",
-    "sports", "museum", "ocean", "animal", "weather", "sunshine", "moonlight"
-  ],
-  "4": [
-    "important", "beautiful", "different", "because", "remember",
-    "exercise", "sentence", "learning", "practice", "improve", "adventure",
-    "discovery", "wonderful", "knowledge", "challenge", "creative", "solution",
-    "achievement", "strategy", "responsible", "curiosity", "imagination",
-    "environment", "confidence", "determination", "cooperation", "reflection",
-    "organization", "communication", "attention", "celebrate", "community",
-    "decision", "experience", "motivation", "preparation", "discussion",
-    "opportunity", "expression", "understanding", "preference"
-  ]
+  "1": {
+    "label": "Sight Words",
+    "words": [
+      "BECAUSE", "THROUGH", "BEFORE", "AFTER", "ALWAYS", "AGAIN", "CHILDREN", "SCHOOL",
+      "FAMILY", "WHERE", "WHICH", "THEIR", "THERE", "THEY’RE", "ENOUGH", "ABOUT", "ABOUTS",
+      "OTHER", "WORDS", "SAID", "SAY", "SAYS", "DOES", "DID", "DONE", "HAVE", "HAS", "HAD",
+      "WANT", "WANTS", "WANTED", "LIKE", "LIKES", "LIKED", "MAKE", "MAKES", "MADE", "LOOK",
+      "LOOKS", "LOOKED", "GO", "GOES", "WENT", "SEE", "SEES", "SAW", "COME", "COMES", "CAME",
+      "GET", "GETS", "GOT", "KNOW", "KNOWS", "KNEW", "WORK", "WORKS", "WORKED", "HELP", "HELPS",
+      "HELPED", "PLAY", "PLAYS", "PLAYED", "LEARN", "LEARNS", "LEARNED", "THINK", "THINKS", "THOUGHT"
+    ]
+  },
+  "2": {
+    "label": "Verbs",
+    "words": [
+      "RUN", "RAN", "RUNNING", "JUMP", "JUMPED", "JUMPING", "WRITE", "WROTE", "WRITING",
+      "READ", "READING", "EAT", "ATE", "EATING", "SEE", "SAW", "SEEING", "PLAY", "PLAYED", "PLAYING",
+      "SING", "SANG", "SINGING", "DRAW", "DREW", "DRAWING", "SWIM", "SWAM", "SWIMMING",
+      "SIT", "SAT", "SITTING", "STAND", "STOOD", "STANDING", "TALK", "TALKED", "TALKING",
+      "RUN", "RAN", "RUNNING", "CLEAN", "CLEANED", "CLEANING", "HELP", "HELPED", "HELPING",
+      "COOK", "COOKED", "COOKING", "TEACH", "TAUGHT", "TEACHING", "LISTEN", "LISTENED", "LISTENING",
+      "BUILD", "BUILT", "BUILDING", "OPEN", "OPENED", "OPENING", "CLOSE", "CLOSED", "CLOSING",
+      "WAIT", "WAITED", "WAITING", "LOOK", "LOOKED", "LOOKING", "RUN", "RUNS", "JUMP", "JUMPS",
+      "CLAP", "CLAPPED", "CLAPPING", "MOVE", "MOVED", "MOVING", "SHOUT", "SHOUTED", "SHOUTING",
+      "WALK", "WALKED", "WALKING"
+    ]
+  },
+  "3": {
+    "label": "Vowel & Phonics Patterns",
+    "words": [
+      "TRAIN", "PAINT", "BEACH", "CLEAN", "STORM", "HORSE", "FARMER", "COIN", "SHOUT", "FLOWER",
+      "GROUND", "TOWN", "HOUSE", "SCHOOL", "TEACHER", "PLANT", "RAIN", "LIGHT", "BRIGHT", "MEAL",
+      "FOOD", "BOOK", "LOOK", "FOOT", "MOON", "SPOON", "BRIDGE", "TREE", "FREE", "GREEN",
+      "CHEST", "CHEESE", "PEACH", "PEAR", "BEAR", "ROAD", "LOAD", "TOAD", "COAST", "BOAST",
+      "STREET", "SWEET", "FEET", "HEAT", "MEET", "SEAT", "GREAT", "PLAY", "DAY", "MAY", "WAY",
+      "PAID", "RAINED", "TRAINED", "CHAIN", "BRAIN", "PAINTED", "PAINTING", "SLAIN", "STRAIN",
+      "GLOW", "BLOW", "SNOW", "SHOW", "CLOWN", "DOWN", "CROWN", "ROUND", "FOUND", "GROUND",
+      "MOUTH", "OUTH", "YOUTH", "LOUD", "PROUD", "HOUSE", "MOUSE"
+    ]
+  },
+  "4": {
+    "label": "South African & Contextual Vocabulary",
+    "words": [
+      "BRAAI", "TAXI", "TOWNSHIP", "SOCCER", "SCHOOL UNIFORM", "TUCK SHOP", "WEEKEND",
+      "HOLIDAY", "HOMEWORK", "FRIENDS", "FAMILY", "TEACHER", "CLASSROOM", "MARKET", "LIBRARY",
+      "COMMUNITY", "PLAYGROUND", "STREET", "GARDEN", "SHOP", "SUPERMARKET", "SCHOOL BUS",
+      "SPORTS DAY", "AFTERCARE", "PARK", "NEIGHBOURHOOD", "CHURCH", "MOSQUE", "LIBRARY",
+      "HALL", "FOOTBALL", "RUGBY", "NETBALL", "CRICKET", "SWIMMING POOL", "BUS STOP",
+      "MEDICAL CLINIC", "HOSPITAL", "TRAFFIC LIGHT", "SHOPPING MALL", "POST OFFICE",
+      "COMMUNITY CENTRE", "TOWN HALL", "FARM", "VEGETABLES", "FRUITS", "CHICKEN", "CATTLE",
+      "HORSE", "TRAIN STATION", "STREET LIGHTS", "SIDEWALK", "FOOTPATH", "CROSSING", "TRAFFIC",
+      "POLICE STATION", "FIRE STATION", "LIBRARY", "MUSEUM", "BEACH", "MOUNTAIN", "RIVER", "DAMS"
+    ]
+  }
 }
