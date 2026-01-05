@@ -1,0 +1,33 @@
+{
+  "1": [
+    "cat", "dog", "sun", "hat", "pen", "cup", "bed", "bat", "man", "pig",
+    "red", "run", "top", "box", "jam", "ball", "car", "fish", "tree", "cow",
+    "toy", "sky", "egg", "ant", "fox", "map", "fan", "tap", "net", "log",
+    "rat", "cap", "bag", "hat", "pop", "pan", "bun", "dot", "lid", "pot"
+  ],
+  "2": [
+    "apple", "water", "house", "chair", "table", "window", "school",
+    "bread", "plant", "river", "happy", "yellow", "friend", "pencil", "light",
+    "clock", "floor", "shirt", "glass", "train", "phone", "cloud", "plate",
+    "bread", "river", "milk", "stone", "street", "river", "watch", "garden",
+    "river", "street", "lamp", "tree", "couch", "knife", "spoon", "door"
+  ],
+  "3": [
+    "picture", "garden", "teacher", "family", "morning", "playing",
+    "outside", "holiday", "animal", "weather", "market", "window", "mountain",
+    "friendship", "birthday", "holiday", "library", "summer", "winter", "forest",
+    "river", "schoolyard", "adventure", "painting", "dancing", "reading",
+    "travel", "holiday", "classroom", "teacher", "playing", "garden", "picnic",
+    "sports", "museum", "ocean", "animal", "weather", "sunshine", "moonlight"
+  ],
+  "4": [
+    "important", "beautiful", "different", "because", "remember",
+    "exercise", "sentence", "learning", "practice", "improve", "adventure",
+    "discovery", "wonderful", "knowledge", "challenge", "creative", "solution",
+    "achievement", "strategy", "responsible", "curiosity", "imagination",
+    "environment", "confidence", "determination", "cooperation", "reflection",
+    "organization", "communication", "attention", "celebrate", "community",
+    "decision", "experience", "motivation", "preparation", "discussion",
+    "opportunity", "expression", "understanding", "preference"
+  ]
+}
