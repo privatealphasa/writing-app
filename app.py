@@ -14,7 +14,7 @@ st.set_page_config(page_title="📝 Daily Writing Fun", layout="wide")
 DATA_FILE = "progress.json"
 WORDS_FILE = "words.json"
 SENTENCES_FILE = "sentence_templates_full.json"
-DAILY_TIME_LIMIT = 10 * 60  # 10 minutes
+DAILY_TIME_LIMIT = 30 * 60  # 10 minutes
 
 # ---------------- OPENAI CLIENT ----------------
 api_key = None
@@ -260,3 +260,4 @@ for i in range(7):
 if rows:
     df = pd.DataFrame(rows)
     st.line_chart(df.set_index("Date")["Accuracy (%)"])
+
