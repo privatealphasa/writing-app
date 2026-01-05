@@ -3,17 +3,21 @@ import random
 import time
 import json
 from datetime import date, timedelta
-from gtts import gTTS
 import tempfile
 import os
 import pandas as pd
+from openai import OpenAI
 
 # ---------------- CONFIG ----------------
 st.set_page_config(page_title="📝 Daily Writing Fun", layout="wide")
 
 DATA_FILE = "progress.json"
 WORDS_FILE = "words.json"
-DAILY_TIME_LIMIT = 10 * 60
+DAILY_TIME_LIMIT = 10 * 60  # 10 minutes
+
+# ---------------- OPENAI CLIENT ----------------
+# Make sure to set your OPENAI_API_KEY in Streamlit Secrets or environment
+client = OpenAI(api_key=st.secrets.get("OPENAI_API_KEY"))
 
 # ---------------- LOAD WORDS ----------------
 def load_words():
@@ -27,12 +31,17 @@ WORD_LEVELS = load_words()
 MAX_LEVEL = max(WORD_LEVELS.keys())
 
 # ---------------- HELPERS ----------------
-def speak(text):
+def speak_openai(text, voice="alloy"):
+    """Convert text to speech using OpenAI TTS."""
     if not text:
         return None
-    tts = gTTS(text=text, lang="en", slow=True)
+    response = client.audio.speech.create(
+        model="gpt-4o-mini-tts",
+        voice=voice,
+        input=text
+    )
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
-        tts.save(fp.name)
+        fp.write(response.audio)
         return fp.name
 
 def today_key():
@@ -87,12 +96,23 @@ defaults = {
     "correct_words": [],
     "mode": "word",
     "word": "",
-    "sentence": ""
+    "sentence": "",
+    "voice": "alloy"
 }
 
 for k, v in defaults.items():
     if k not in st.session_state:
         st.session_state[k] = v
+
+# ---------------- SELECT VOICE ----------------
+voice_options = {
+    "American": "alloy",
+    "British": "aria",
+    "South African": "verse"
+}
+st.sidebar.subheader("🎤 Select Voice/Accent")
+selected_voice = st.sidebar.selectbox("Choose a voice:", list(voice_options.keys()))
+st.session_state.voice = voice_options[selected_voice]
 
 # ---------------- ENSURE ACTIVE CONTENT ----------------
 if st.session_state.mode == "word" and not st.session_state.word:
@@ -147,9 +167,9 @@ target_text = (
 
 # ---------------- AUDIO ----------------
 st.subheader("👂 Listen Carefully!")
-audio = speak(target_text)
-if audio:
-    st.audio(audio)
+audio_file = speak_openai(target_text, st.session_state.voice)
+if audio_file:
+    st.audio(audio_file)
 
 # ---------------- SHOW AFTER 3 FAILS ----------------
 if st.session_state.incorrect_attempts >= 3:
