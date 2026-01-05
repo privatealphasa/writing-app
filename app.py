@@ -6,7 +6,6 @@ from datetime import date, timedelta
 import tempfile
 import os
 import pandas as pd
-from dotenv import load_dotenv
 from openai import OpenAI
 
 # ---------------- CONFIG ----------------
@@ -19,11 +18,7 @@ DAILY_TIME_LIMIT = 10 * 60  # 10 minutes
 # ---------------- OPENAI CLIENT ----------------
 # Make sure to set your OPENAI_API_KEY in Streamlit Secrets or environment
 # Prefer Streamlit secrets, fallback to env
-
-# Load .env for local development
-load_dotenv()
-
-# Safely load API key
+# Only use Streamlit Secrets or env vars
 api_key = None
 
 try:
@@ -32,7 +27,7 @@ except Exception:
     api_key = os.getenv("OPENAI_API_KEY")
 
 if not api_key:
-    st.error("❌ OPENAI_API_KEY not found. Set it in .env or Streamlit Secrets.")
+    st.error("❌ OPENAI_API_KEY not set")
     st.stop()
 
 client = OpenAI(api_key=api_key)
@@ -273,3 +268,4 @@ for i in range(7):
 if rows:
     df = pd.DataFrame(rows)
     st.line_chart(df.set_index("Date")["Accuracy (%)"])
+
