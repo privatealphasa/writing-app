@@ -13,14 +13,11 @@ st.set_page_config(page_title="📝 Daily Writing Fun", layout="wide")
 
 DATA_FILE = "progress.json"
 WORDS_FILE = "words.json"
+SENTENCES_FILE = "sentence_templates_full.json"
 DAILY_TIME_LIMIT = 10 * 60  # 10 minutes
 
 # ---------------- OPENAI CLIENT ----------------
-# Make sure to set your OPENAI_API_KEY in Streamlit Secrets or environment
-# Prefer Streamlit secrets, fallback to env
-# Only use Streamlit Secrets or env vars
 api_key = None
-
 try:
     api_key = st.secrets["OPENAI_API_KEY"]
 except Exception:
@@ -32,30 +29,30 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
-# ---------------- LOAD WORDS ----------------
-def load_words():
-    if not os.path.exists(WORDS_FILE):
-        st.error("❌ words.json file not found.")
+# ---------------- LOAD WORDS & SENTENCES ----------------
+def load_json(file):
+    if not os.path.exists(file):
+        st.error(f"❌ {file} not found.")
         st.stop()
-    with open(WORDS_FILE, "r", encoding="utf-8") as f:
-        return {int(k): v for k, v in json.load(f).items()}
+    with open(file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-WORD_LEVELS = load_words()
-MAX_LEVEL = max(WORD_LEVELS.keys())
+WORD_SKILLS = load_json(WORDS_FILE)
+SENTENCE_TEMPLATES = load_json(SENTENCES_FILE)
+SKILLS = list(WORD_SKILLS.keys())
+MAX_SKILL = max(int(s) for s in SKILLS)
 
 # ---------------- HELPERS ----------------
 def speak_openai(text, voice="alloy"):
     if not text:
         return None
-
     response = client.audio.speech.create(
         model="gpt-4o-mini-tts",
         voice=voice,
         input=text
     )
-
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
-        fp.write(response.read())  # ✅ THIS is the fix
+        fp.write(response.read())
         return fp.name
 
 def today_key():
@@ -71,38 +68,39 @@ def save_progress(data):
     with open(DATA_FILE, "w") as f:
         json.dump(data, f, indent=2)
 
-def calculate_streak(progress):
+def calculate_streak(progress, skill=None):
     streak = 0
     today = date.today()
     for i in range(30):
-        if str(today - timedelta(days=i)) in progress:
-            streak += 1
+        d = str(today - timedelta(days=i))
+        if d in progress:
+            if skill:
+                if skill in progress[d] and progress[d][skill]["correct"] > 0:
+                    streak += 1
+                else:
+                    break
+            else:
+                streak += 1
         else:
             break
     return streak
 
-def generate_sentence():
-    subjects = ["The child", "A boy", "A girl", "The teacher"]
-    verbs = ["likes", "sees", "uses", "learns"]
-
-    words = []
-    for lvl in range(1, min(5, MAX_LEVEL + 1)):
-        words.extend(WORD_LEVELS.get(lvl, []))
-
-    return f"{random.choice(subjects)} {random.choice(verbs)} {random.choice(words)}."
-
-def pick_word():
-    level_words = WORD_LEVELS[st.session_state.level]
-    remaining = [w for w in level_words if w not in st.session_state.correct_words]
+def pick_word(skill):
+    level_words = WORD_SKILLS[skill]["words"]
+    remaining = [w for w in st.session_state.correct_words if w not in st.session_state.correct_words]
     if not remaining:
         st.session_state.correct_words = []
         remaining = level_words
-    return random.choice(remaining)
+    return random.choice(level_words)
+
+def pick_sentence(skill):
+    templates = SENTENCE_TEMPLATES[skill]["templates"]
+    return random.choice(templates)
 
 # ---------------- SESSION STATE ----------------
 defaults = {
     "start_time": time.time(),
-    "level": 1,
+    "skill": "1",  # start with first literacy skill
     "correct": 0,
     "wrong": 0,
     "incorrect_attempts": 0,
@@ -130,16 +128,15 @@ st.session_state.voice = voice_options[selected_voice]
 
 # ---------------- ENSURE ACTIVE CONTENT ----------------
 if st.session_state.mode == "word" and not st.session_state.word:
-    st.session_state.word = pick_word()
-
+    st.session_state.word = pick_word(st.session_state.skill)
 if st.session_state.mode == "sentence" and not st.session_state.sentence:
-    st.session_state.sentence = generate_sentence()
+    st.session_state.sentence = pick_sentence(st.session_state.skill)
 
 # ---------------- TIMER ----------------
 elapsed = int(time.time() - st.session_state.start_time)
 remaining = max(0, DAILY_TIME_LIMIT - elapsed)
 
-# ---------------- PLAYFUL HEADER ----------------
+# ---------------- HEADER ----------------
 st.markdown(
     """
     <div style='text-align:center; background-color:#FFD700; padding:10px; border-radius:15px'>
@@ -148,7 +145,6 @@ st.markdown(
     </div>
     """, unsafe_allow_html=True
 )
-
 st.progress(remaining / DAILY_TIME_LIMIT)
 st.markdown(f"<h3 style='color:#4B0082;'>⏱️ Time left: {remaining // 60}:{remaining % 60:02d}</h3>", unsafe_allow_html=True)
 
@@ -157,27 +153,25 @@ st.subheader("📊 Your Stats")
 cols = st.columns(4)
 cols[0].metric("⭐ Correct", st.session_state.correct)
 cols[1].metric("❌ Wrong", st.session_state.wrong)
-cols[2].metric("🎯 Level", st.session_state.level)
+cols[2].metric("🎯 Skill", WORD_SKILLS[st.session_state.skill]["label"])
 cols[3].metric("📝 Mode", st.session_state.mode.capitalize())
 
 # ---------------- TIME UP ----------------
 if remaining == 0:
     progress = load_progress()
-    progress[today_key()] = {
+    if today_key() not in progress:
+        progress[today_key()] = {}
+    progress[today_key()][st.session_state.skill] = {
         "correct": st.session_state.correct,
         "wrong": st.session_state.wrong,
-        "level": st.session_state.level
+        "mode": st.session_state.mode
     }
     save_progress(progress)
     st.success("🎉 Time's up! Great job!")
     st.stop()
 
 # ---------------- TARGET TEXT ----------------
-target_text = (
-    st.session_state.word
-    if st.session_state.mode == "word"
-    else st.session_state.sentence
-)
+target_text = st.session_state.word if st.session_state.mode == "word" else st.session_state.sentence
 
 # ---------------- AUDIO ----------------
 st.subheader("👂 Listen Carefully!")
@@ -193,15 +187,12 @@ if st.session_state.incorrect_attempts >= 3:
     )
 
 # ---------------- INPUT ----------------
-user_input = st.text_input(
-    "Type what you hear:",
-    key=f"input_{st.session_state.input_id}"
-)
+user_input = st.text_input("Type what you hear:", key=f"input_{st.session_state.input_id}")
 
 # ---------------- SUBMIT ----------------
 if st.button("Submit"):
-    typed = user_input.lower().strip()
-    target = target_text.lower()
+    typed = user_input.upper().strip()  # CAPS aligned
+    target = target_text.upper()
 
     if typed == target:
         st.success("⭐ Correct! 🎉")
@@ -214,11 +205,12 @@ if st.button("Submit"):
 
             # Adaptive progression
             if st.session_state.correct % 5 == 0:
-                if st.session_state.level < MAX_LEVEL:
-                    st.session_state.level += 1
+                next_skill = str(int(st.session_state.skill) + 1)
+                if next_skill in WORD_SKILLS:
+                    st.session_state.skill = next_skill
                     st.session_state.correct_words = []
                     st.balloons()
-                elif st.session_state.level >= 4:
+                elif int(st.session_state.skill) >= 4:
                     st.session_state.mode = "sentence"
                     st.success("🎊 Sentence Mode Unlocked! Try typing sentences!")
 
@@ -249,16 +241,16 @@ if st.session_state.correct >= 20:
 
 # ---------------- PARENT DASHBOARD ----------------
 st.divider()
-st.subheader("📊 Parent Dashboard")
+st.subheader("📊 Parent/Teacher Dashboard")
 
 progress = load_progress()
-st.metric("🔥 Streak", f"{calculate_streak(progress)} days")
+st.metric("🔥 Streak", f"{calculate_streak(progress, st.session_state.skill)} days")
 
 rows = []
 for i in range(7):
     d = str(date.today() - timedelta(days=i))
-    if d in progress:
-        p = progress[d]
+    if d in progress and st.session_state.skill in progress[d]:
+        p = progress[d][st.session_state.skill]
         total = p["correct"] + p["wrong"]
         rows.append({
             "Date": d,
@@ -268,4 +260,3 @@ for i in range(7):
 if rows:
     df = pd.DataFrame(rows)
     st.line_chart(df.set_index("Date")["Accuracy (%)"])
-
