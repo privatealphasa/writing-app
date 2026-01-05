@@ -19,13 +19,24 @@ DAILY_TIME_LIMIT = 10 * 60  # 10 minutes
 # ---------------- OPENAI CLIENT ----------------
 # Make sure to set your OPENAI_API_KEY in Streamlit Secrets or environment
 # Prefer Streamlit secrets, fallback to env
-api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+
+# Load .env for local development
+load_dotenv()
+
+# Safely load API key
+api_key = None
+
+try:
+    api_key = st.secrets["OPENAI_API_KEY"]
+except Exception:
+    api_key = os.getenv("OPENAI_API_KEY")
 
 if not api_key:
-    st.error("❌ OPENAI_API_KEY not set")
+    st.error("❌ OPENAI_API_KEY not found. Set it in .env or Streamlit Secrets.")
     st.stop()
 
 client = OpenAI(api_key=api_key)
+
 # ---------------- LOAD WORDS ----------------
 def load_words():
     if not os.path.exists(WORDS_FILE):
@@ -39,16 +50,17 @@ MAX_LEVEL = max(WORD_LEVELS.keys())
 
 # ---------------- HELPERS ----------------
 def speak_openai(text, voice="alloy"):
-    """Convert text to speech using OpenAI TTS."""
     if not text:
         return None
+
     response = client.audio.speech.create(
         model="gpt-4o-mini-tts",
         voice=voice,
         input=text
     )
+
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
-        fp.write(response.audio)
+        fp.write(response.read())  # ✅ THIS is the fix
         return fp.name
 
 def today_key():
@@ -114,7 +126,7 @@ for k, v in defaults.items():
 # ---------------- SELECT VOICE ----------------
 voice_options = {
     "American": "alloy",
-    "British": "aria",
+    "British": "nova",
     "South African": "verse"
 }
 st.sidebar.subheader("🎤 Select Voice/Accent")
@@ -261,4 +273,3 @@ for i in range(7):
 if rows:
     df = pd.DataFrame(rows)
     st.line_chart(df.set_index("Date")["Accuracy (%)"])
-
