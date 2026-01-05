@@ -6,6 +6,7 @@ from datetime import date, timedelta
 import tempfile
 import os
 import pandas as pd
+from dotenv import load_dotenv
 from openai import OpenAI
 
 # ---------------- CONFIG ----------------
@@ -17,8 +18,14 @@ DAILY_TIME_LIMIT = 10 * 60  # 10 minutes
 
 # ---------------- OPENAI CLIENT ----------------
 # Make sure to set your OPENAI_API_KEY in Streamlit Secrets or environment
-client = OpenAI(api_key=st.secrets.get("OPENAI_API_KEY"))
+# Prefer Streamlit secrets, fallback to env
+api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 
+if not api_key:
+    st.error("❌ OPENAI_API_KEY not set")
+    st.stop()
+
+client = OpenAI(api_key=api_key)
 # ---------------- LOAD WORDS ----------------
 def load_words():
     if not os.path.exists(WORDS_FILE):
@@ -254,3 +261,4 @@ for i in range(7):
 if rows:
     df = pd.DataFrame(rows)
     st.line_chart(df.set_index("Date")["Accuracy (%)"])
+
