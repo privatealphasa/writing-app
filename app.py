@@ -2,261 +2,224 @@ import streamlit as st
 import random
 import time
 import json
-from datetime import date, timedelta
-import tempfile
 import os
-import pandas as pd
+import tempfile
+from datetime import date, timedelta
 from openai import OpenAI
+import pandas as pd
 
-# ---------------- CONFIG ----------------
-st.set_page_config(page_title="📝 Daily Writing Fun", layout="wide")
+# ================= CONFIG =================
+st.set_page_config(page_title="🎮 Daily Writing Quest", layout="wide")
 
 DATA_FILE = "progress.json"
 WORDS_FILE = "words.json"
 SENTENCES_FILE = "sentence_templates_full.json"
-DAILY_TIME_LIMIT = 10 * 60  # 10 minutes
+DAILY_TIME_LIMIT = 10 * 60
 
-# ---------------- OPENAI CLIENT ----------------
-api_key = None
-try:
-    api_key = st.secrets["OPENAI_API_KEY"]
-except Exception:
-    api_key = os.getenv("OPENAI_API_KEY")
-
+# ================= OPENAI =================
+api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 if not api_key:
-    st.error("❌ OPENAI_API_KEY not set")
+    st.error("OPENAI_API_KEY missing")
     st.stop()
 
 client = OpenAI(api_key=api_key)
 
-# ---------------- LOAD WORDS & SENTENCES ----------------
+# ================= LOAD DATA =================
 def load_json(file):
     if not os.path.exists(file):
-        st.error(f"❌ {file} not found.")
+        st.error(f"{file} not found")
         st.stop()
     with open(file, "r", encoding="utf-8") as f:
         return json.load(f)
 
 WORD_SKILLS = load_json(WORDS_FILE)
 SENTENCE_TEMPLATES = load_json(SENTENCES_FILE)
-SKILLS = list(WORD_SKILLS.keys())
-MAX_SKILL = max(int(s) for s in SKILLS)
 
-# ---------------- HELPERS ----------------
-def speak_openai(text, voice="alloy"):
-    if not text:
-        return None
+# ================= GAME DATA =================
+WORLDS = {
+    "1": "🌱 Grass World",
+    "2": "🪨 Stone Caves",
+    "3": "🌲 Forest Realm",
+    "4": "🔥 Nether Zone",
+    "sentence": "🏰 Creative World"
+}
+
+ITEMS = ["🧱", "🪵", "🪨", "💎"]
+SUCCESS_LINES = ["💎 Epic!", "⚔️ Critical Hit!", "🧠 Brain Level Up!"]
+FAIL_LINES = ["😅 Almost!", "🪵 Oof! Try again!", "🙈 Tricky one!"]
+
+AVATARS = ["🧙 Wizard", "🧑‍🚀 Astronaut", "🧱 Builder", "🐉 Dragon Trainer"]
+
+# ================= HELPERS =================
+def speak(text, voice):
     response = client.audio.speech.create(
         model="gpt-4o-mini-tts",
         voice=voice,
         input=text
     )
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
-        fp.write(response.read())
-        return fp.name
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
+        f.write(response.read())
+        return f.name
 
 def today_key():
     return str(date.today())
 
 def load_progress():
-    if os.path.exists(DATA_FILE):
-        with open(DATA_FILE, "r") as f:
-            return json.load(f)
-    return {}
+    return json.load(open(DATA_FILE)) if os.path.exists(DATA_FILE) else {}
 
-def save_progress(data):
-    with open(DATA_FILE, "w") as f:
-        json.dump(data, f, indent=2)
-
-def calculate_streak(progress, skill=None):
-    streak = 0
-    today = date.today()
-    for i in range(30):
-        d = str(today - timedelta(days=i))
-        if d in progress:
-            if skill:
-                if skill in progress[d] and progress[d][skill]["correct"] > 0:
-                    streak += 1
-                else:
-                    break
-            else:
-                streak += 1
-        else:
-            break
-    return streak
+def save_progress(p):
+    json.dump(p, open(DATA_FILE, "w"), indent=2)
 
 def pick_word(skill):
-    level_words = WORD_SKILLS[skill]["words"]
-    remaining = [w for w in st.session_state.correct_words if w not in st.session_state.correct_words]
-    if not remaining:
-        st.session_state.correct_words = []
-        remaining = level_words
-    return random.choice(level_words)
+    return random.choice(WORD_SKILLS[skill]["words"])
 
 def pick_sentence(skill):
-    templates = SENTENCE_TEMPLATES[skill]["templates"]
-    return random.choice(templates)
+    return random.choice(SENTENCE_TEMPLATES[skill]["templates"])
 
-# ---------------- SESSION STATE ----------------
+# ================= SESSION STATE =================
 defaults = {
     "start_time": time.time(),
-    "skill": "1",  # start with first literacy skill
-    "correct": 0,
-    "wrong": 0,
-    "incorrect_attempts": 0,
-    "input_id": 0,
-    "correct_words": [],
+    "skill": "1",
     "mode": "word",
     "word": "",
     "sentence": "",
+    "xp": 0,
+    "hearts": 3,
+    "inventory": [],
+    "house": [],
+    "badges": [],
+    "streak": 0,
+    "input_id": 0,
+    "avatar": AVATARS[0],
     "voice": "alloy"
 }
 
 for k, v in defaults.items():
-    if k not in st.session_state:
-        st.session_state[k] = v
+    st.session_state.setdefault(k, v)
 
-# ---------------- SELECT VOICE ----------------
-voice_options = {
-    "American": "alloy",
-    "British": "nova",
-    "South African": "verse"
-}
-st.sidebar.subheader("🎤 Select Voice/Accent")
-selected_voice = st.sidebar.selectbox("Choose a voice:", list(voice_options.keys()))
-st.session_state.voice = voice_options[selected_voice]
+# ================= SIDEBAR =================
+st.sidebar.subheader("🧑 Character")
+st.session_state.avatar = st.sidebar.selectbox("Choose Avatar", AVATARS)
 
-# ---------------- ENSURE ACTIVE CONTENT ----------------
-if st.session_state.mode == "word" and not st.session_state.word:
-    st.session_state.word = pick_word(st.session_state.skill)
-if st.session_state.mode == "sentence" and not st.session_state.sentence:
-    st.session_state.sentence = pick_sentence(st.session_state.skill)
+st.sidebar.subheader("🎤 Voice")
+voices = {"American": "alloy", "British": "nova", "South African": "verse"}
+st.session_state.voice = voices[
+    st.sidebar.selectbox("Accent", list(voices.keys()))
+]
 
-# ---------------- TIMER ----------------
+# ================= TIMER =================
 elapsed = int(time.time() - st.session_state.start_time)
 remaining = max(0, DAILY_TIME_LIMIT - elapsed)
 
-# ---------------- HEADER ----------------
-st.markdown(
-    """
-    <div style='text-align:center; background-color:#FFD700; padding:10px; border-radius:15px'>
-        <h1 style='color:#FF4500;'>🎉 Daily Writing Fun! 📝</h1>
-        <p style='font-size:20px; color:#008080;'>Listen, Type, and Earn Stars!</p>
-    </div>
-    """, unsafe_allow_html=True
-)
+# ================= HEADER =================
+st.markdown("""
+<div style='text-align:center; background:#6BCF63; padding:20px; border-radius:20px'>
+<h1>🎮 Daily Writing Quest</h1>
+<h3>Spell Words • Earn XP • Build Your World</h3>
+</div>
+""", unsafe_allow_html=True)
+
 st.progress(remaining / DAILY_TIME_LIMIT)
-st.markdown(f"<h3 style='color:#4B0082;'>⏱️ Time left: {remaining // 60}:{remaining % 60:02d}</h3>", unsafe_allow_html=True)
 
-# ---------------- STATS ----------------
-st.subheader("📊 Your Stats")
+# ================= GAME STATS =================
 cols = st.columns(4)
-cols[0].metric("⭐ Correct", st.session_state.correct)
-cols[1].metric("❌ Wrong", st.session_state.wrong)
-cols[2].metric("🎯 Skill", WORD_SKILLS[st.session_state.skill]["label"])
-cols[3].metric("📝 Mode", st.session_state.mode.capitalize())
+cols[0].metric("⚡ XP", st.session_state.xp)
+cols[1].metric("❤️ Hearts", st.session_state.hearts)
+cols[2].metric("🌍 World", WORLDS.get(st.session_state.skill))
+cols[3].metric("🧍 Avatar", st.session_state.avatar)
 
-# ---------------- TIME UP ----------------
-if remaining == 0:
+# ================= TIME UP =================
+if remaining == 0 or st.session_state.hearts == 0:
     progress = load_progress()
-    if today_key() not in progress:
-        progress[today_key()] = {}
+    progress.setdefault(today_key(), {})
     progress[today_key()][st.session_state.skill] = {
-        "correct": st.session_state.correct,
-        "wrong": st.session_state.wrong,
-        "mode": st.session_state.mode
+        "xp": st.session_state.xp
     }
     save_progress(progress)
-    st.success("🎉 Time's up! Great job!")
+    st.success("🎉 Quest Complete!")
     st.stop()
 
-# ---------------- TARGET TEXT ----------------
-target_text = st.session_state.word if st.session_state.mode == "word" else st.session_state.sentence
+# ================= CONTENT =================
+if st.session_state.mode == "word" and not st.session_state.word:
+    st.session_state.word = pick_word(st.session_state.skill)
 
-# ---------------- AUDIO ----------------
-st.subheader("👂 Listen Carefully!")
-audio_file = speak_openai(target_text, st.session_state.voice)
-if audio_file:
-    st.audio(audio_file)
+if st.session_state.mode == "sentence" and not st.session_state.sentence:
+    st.session_state.sentence = pick_sentence(st.session_state.skill)
 
-# ---------------- SHOW AFTER 3 FAILS ----------------
-if st.session_state.incorrect_attempts >= 3:
-    st.markdown(
-        f"<div style='text-align:center; background-color:#FFA07A; padding:15px; border-radius:10px;'>"
-        f"<h2 style='color:#800080;'>{target_text}</h2></div>", unsafe_allow_html=True
-    )
+target = st.session_state.word if st.session_state.mode == "word" else st.session_state.sentence
 
-# ---------------- INPUT ----------------
-user_input = st.text_input("Type what you hear:", key=f"input_{st.session_state.input_id}")
+# ================= AUDIO =================
+st.subheader("👂 Listen")
+audio = speak(target, st.session_state.voice)
+st.audio(audio)
 
-# ---------------- SUBMIT ----------------
-if st.button("Submit"):
-    typed = user_input.upper().strip()  # CAPS aligned
-    target = target_text.upper()
+# ================= INPUT =================
+user_input = st.text_input(
+    "⌨️ Type what you hear:",
+    key=f"input_{st.session_state.input_id}"
+)
 
-    if typed == target:
-        st.success("⭐ Correct! 🎉")
-        st.session_state.correct += 1
-        st.session_state.incorrect_attempts = 0
+# ================= SUBMIT =================
+if st.button("🚀 Submit"):
+    typed = user_input.upper().strip()
+    correct = target.upper()
 
-        if st.session_state.mode == "word":
-            st.session_state.correct_words.append(st.session_state.word)
-            st.session_state.word = ""
+    if typed == correct:
+        st.success(random.choice(SUCCESS_LINES))
+        st.session_state.xp += 10
+        st.session_state.streak += 1
+        st.session_state.inventory.append(random.choice(ITEMS))
 
-            # Adaptive progression
-            if st.session_state.correct % 5 == 0:
-                next_skill = str(int(st.session_state.skill) + 1)
-                if next_skill in WORD_SKILLS:
-                    st.session_state.skill = next_skill
-                    st.session_state.correct_words = []
-                    st.balloons()
-                elif int(st.session_state.skill) >= 4:
-                    st.session_state.mode = "sentence"
-                    st.success("🎊 Sentence Mode Unlocked! Try typing sentences!")
+        if st.session_state.streak % 5 == 0:
+            st.session_state.hearts = min(3, st.session_state.hearts + 1)
 
-        else:
-            st.session_state.sentence = ""
+        if st.session_state.xp % 50 == 0:
+            st.session_state.house.append("🏠")
 
+        if st.session_state.xp % 100 == 0:
+            st.session_state.badges.append("💎 Diamond Speller")
+
+        if st.session_state.xp % 50 == 0:
+            next_skill = str(int(st.session_state.skill) + 1)
+            if next_skill in WORD_SKILLS:
+                st.session_state.skill = next_skill
+            else:
+                st.session_state.mode = "sentence"
+
+        st.session_state.word = ""
+        st.session_state.sentence = ""
         st.session_state.input_id += 1
+        st.balloons()
         st.rerun()
 
     else:
-        st.session_state.wrong += 1
-        st.session_state.incorrect_attempts += 1
-        if st.session_state.incorrect_attempts < 3:
-            st.error("❌ Try again! Keep going!")
-        else:
-            st.error(f"✅ Correct answer: {target_text}")
+        st.error(random.choice(FAIL_LINES))
+        st.session_state.hearts -= 1
+        st.session_state.streak = 0
+        st.session_state.input_id += 1
         st.rerun()
 
-# ---------------- REWARDS ----------------
+# ================= INVENTORY =================
 st.divider()
-st.subheader("🏆 Achievements")
-if st.session_state.correct >= 5:
-    st.success("🥉 Bronze Star!")
-if st.session_state.correct >= 10:
-    st.success("🥈 Silver Star!")
-if st.session_state.correct >= 20:
-    st.success("🥇 Gold Star!")
+st.subheader("🎒 Inventory")
+st.write(" ".join(st.session_state.inventory[-20:]))
 
-# ---------------- PARENT DASHBOARD ----------------
+st.subheader("🏠 Your House")
+st.write(" ".join(st.session_state.house) if st.session_state.house else "Empty plot")
+
+st.subheader("🏆 Badges")
+st.write(" ".join(set(st.session_state.badges)) if st.session_state.badges else "No badges yet")
+
+# ================= PARENT DASHBOARD =================
 st.divider()
-st.subheader("📊 Parent/Teacher Dashboard")
+st.subheader("📊 Parent Dashboard")
 
 progress = load_progress()
-st.metric("🔥 Streak", f"{calculate_streak(progress, st.session_state.skill)} days")
-
 rows = []
-for i in range(7):
-    d = str(date.today() - timedelta(days=i))
-    if d in progress and st.session_state.skill in progress[d]:
-        p = progress[d][st.session_state.skill]
-        total = p["correct"] + p["wrong"]
-        rows.append({
-            "Date": d,
-            "Accuracy (%)": int((p["correct"] / total) * 100) if total else 0
-        })
+for d, v in progress.items():
+    if st.session_state.skill in v:
+        rows.append({"Date": d, "XP": v[st.session_state.skill]["xp"]})
 
 if rows:
     df = pd.DataFrame(rows)
-    st.line_chart(df.set_index("Date")["Accuracy (%)"])
+    st.line_chart(df.set_index("Date"))
