@@ -144,24 +144,27 @@ gtts_lang = st.sidebar.selectbox(
 )
 
 # ---------------- SELECT TTS ENGINE ----------------
+# ---------------- SELECT TTS ENGINE ----------------
 st.sidebar.subheader("🔊 Text-to-Speech Engine")
 
-tts_engine = st.sidebar.radio(
+# ensure defaults exist
+if "tts_engine" not in st.session_state:
+    st.session_state.tts_engine = "OpenAI"
+if "gtts_lang" not in st.session_state:
+    st.session_state.gtts_lang = "en"
+
+st.sidebar.radio(
     "Choose TTS:",
-    ["OpenAI", "gTTS"]
+    ["OpenAI", "gTTS"],
+    key="tts_engine"
 )
 
-gtts_lang = st.sidebar.selectbox(
+st.sidebar.selectbox(
     "gTTS Language",
     ["en", "af"],
-    disabled=(tts_engine != "gTTS")
+    key="gtts_lang",
+    disabled=(st.session_state.tts_engine != "gTTS")
 )
-
-# ✅ SAVE INTO SESSION STATE (THIS IS THE LINE YOU ASKED ABOUT)
-st.session_state.tts_engine = tts_engine
-st.session_state.gtts_lang = gtts_lang
-
-
 
 # ---------------- ENSURE ACTIVE CONTENT ----------------
 if st.session_state.mode == "word" and not st.session_state.word:
@@ -305,4 +308,5 @@ for i in range(7):
 if rows:
     df = pd.DataFrame(rows)
     st.line_chart(df.set_index("Date")["Accuracy (%)"])
+
 
