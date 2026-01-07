@@ -7,8 +7,6 @@ import tempfile
 import os
 import pandas as pd
 from openai import OpenAI
-from gtts import gTTS
-
 
 # ---------------- CONFIG ----------------
 st.set_page_config(page_title="📝 Daily Writing Fun", layout="wide")
@@ -57,15 +55,6 @@ def speak_openai(text, voice="alloy"):
         fp.write(response.read())
         return fp.name
 
-def speak_gtts(text, lang="en"):
-    if not text:
-        return None
-
-    tts = gTTS(text=text, lang=lang)
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
-        tts.save(fp.name)
-        return fp.name
-
 def today_key():
     return str(date.today())
 
@@ -111,7 +100,7 @@ def pick_sentence(skill):
 # ---------------- SESSION STATE ----------------
 defaults = {
     "start_time": time.time(),
-    "skill": "1",
+    "skill": "1",  # start with first literacy skill
     "correct": 0,
     "wrong": 0,
     "incorrect_attempts": 0,
@@ -120,11 +109,7 @@ defaults = {
     "mode": "word",
     "word": "",
     "sentence": "",
-    "voice": "alloy",
-
-    # 🔊 TTS defaults
-    "tts_engine": "OpenAI",
-    "gtts_lang": "en"
+    "voice": "alloy"
 }
 
 for k, v in defaults.items():
@@ -137,32 +122,9 @@ voice_options = {
     "British": "nova",
     "South African": "verse"
 }
-gtts_lang = st.sidebar.selectbox(
-    "gTTS Language",
-    ["en", "en-uk", "en-us", "af"],
-    disabled=(st.session_state.tts_engine != "gTTS")
-)
-
-# ---------------- SELECT TTS ENGINE ----------------
-st.sidebar.subheader("🔊 Text-to-Speech Engine")
-
-if "tts_engine" not in st.session_state:
-    st.session_state.tts_engine = "OpenAI"
-if "gtts_lang" not in st.session_state:
-    st.session_state.gtts_lang = "en"
-
-st.sidebar.radio(
-    "Choose TTS:",
-    ["OpenAI", "gTTS"],
-    key="tts_engine"
-)
-
-st.sidebar.selectbox(
-    "gTTS Language",
-    ["en", "af"],
-    key="gtts_lang",
-    disabled=(st.session_state.tts_engine != "gTTS")
-)
+st.sidebar.subheader("🎤 Select Voice/Accent")
+selected_voice = st.sidebar.selectbox("Choose a voice:", list(voice_options.keys()))
+st.session_state.voice = voice_options[selected_voice]
 
 # ---------------- ENSURE ACTIVE CONTENT ----------------
 if st.session_state.mode == "word" and not st.session_state.word:
@@ -213,15 +175,7 @@ target_text = st.session_state.word if st.session_state.mode == "word" else st.s
 
 # ---------------- AUDIO ----------------
 st.subheader("👂 Listen Carefully!")
-
-audio_file = None
-
-if tts_engine == "OpenAI":
-    audio_file = speak_openai(target_text, st.session_state.voice)
-
-elif tts_engine == "gTTS":
-    audio_file = speak_gtts(target_text, lang=gtts_lang)
-
+audio_file = speak_openai(target_text, st.session_state.voice)
 if audio_file:
     st.audio(audio_file)
 
@@ -306,6 +260,3 @@ for i in range(7):
 if rows:
     df = pd.DataFrame(rows)
     st.line_chart(df.set_index("Date")["Accuracy (%)"])
-
-
-
