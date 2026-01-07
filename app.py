@@ -7,6 +7,7 @@ import tempfile
 import os
 import pandas as pd
 from openai import OpenAI
+from gtts import gTTS
 
 # ---------------- CONFIG ----------------
 st.set_page_config(page_title="📝 Daily Writing Fun", layout="wide")
@@ -53,6 +54,15 @@ def speak_openai(text, voice="alloy"):
     )
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
         fp.write(response.read())
+        return fp.name
+
+def speak_gtts(text, lang="en"):
+    if not text:
+        return None
+
+    tts = gTTS(text=text, lang=lang)
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as fp:
+        tts.save(fp.name)
         return fp.name
 
 def today_key():
@@ -122,10 +132,32 @@ voice_options = {
     "British": "nova",
     "South African": "verse"
 }
-st.sidebar.subheader("🎤 Select Voice/Accent")
-selected_voice = st.sidebar.selectbox("Choose a voice:", list(voice_options.keys()))
-st.session_state.voice = voice_options[selected_voice]
+st.sidebar.subheader("🎤 Voice Settings")
 
+tts_engine = st.sidebar.selectbox(
+    "TTS Engine",
+    ["OpenAI", "Google (gTTS)"]
+)
+
+if tts_engine == "OpenAI":
+    voice_options = {
+        "American": "alloy",
+        "British": "nova",
+        "South African": "verse"
+    }
+    selected_voice = st.sidebar.selectbox("Accent", list(voice_options.keys()))
+    st.session_state.voice = voice_options[selected_voice]
+    st.session_state.tts_engine = "openai"
+
+else:
+    lang_options = {
+        "English": "en",
+        "Afrikaans": "af"
+    }
+    selected_lang = st.sidebar.selectbox("Language", list(lang_options.keys()))
+    st.session_state.gtts_lang = lang_options[selected_lang]
+    st.session_state.tts_engine = "gtts"
+    
 # ---------------- ENSURE ACTIVE CONTENT ----------------
 if st.session_state.mode == "word" and not st.session_state.word:
     st.session_state.word = pick_word(st.session_state.skill)
@@ -260,3 +292,4 @@ for i in range(7):
 if rows:
     df = pd.DataFrame(rows)
     st.line_chart(df.set_index("Date")["Accuracy (%)"])
+
