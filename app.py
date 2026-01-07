@@ -140,14 +140,12 @@ voice_options = {
 gtts_lang = st.sidebar.selectbox(
     "gTTS Language",
     ["en", "en-uk", "en-us", "af"],
-    disabled=(tts_engine != "gTTS")
+    disabled=(st.session_state.tts_engine != "gTTS")
 )
 
 # ---------------- SELECT TTS ENGINE ----------------
-# ---------------- SELECT TTS ENGINE ----------------
 st.sidebar.subheader("🔊 Text-to-Speech Engine")
 
-# ensure defaults exist
 if "tts_engine" not in st.session_state:
     st.session_state.tts_engine = "OpenAI"
 if "gtts_lang" not in st.session_state:
@@ -308,5 +306,6 @@ for i in range(7):
 if rows:
     df = pd.DataFrame(rows)
     st.line_chart(df.set_index("Date")["Accuracy (%)"])
+
 
 
