@@ -1,59 +1,122 @@
 {
   "1": {
-    "label": "Sight",
+    "label": "Sight Words",
     "words": [
       "CAT", "DOG", "HOUSE", "SUN", "MOON", "STAR", "TREE", "BOOK", "PENCIL", "CHAIR",
       "BECAUSE", "THROUGH", "BEFORE", "AFTER", "ALWAYS", "AGAIN", "CHILDREN", "SCHOOL",
       "FAMILY", "WHERE", "WHICH", "THEIR", "THERE", "THEY’RE", "ENOUGH", "ABOUT",
-      "OTHER", "WORDS", "SAID", "SAY", "SAYS", "DOES", "DID", "DONE", "HAVE", "HAS", "HAD",
-      "WANT", "WANTS", "WANTED", "LIKE", "LIKES", "LIKED", "MAKE", "MAKES", "MADE", "LOOK",
-      "LOOKS", "LOOKED", "GO", "GOES", "WENT", "SEE", "SEES", "SAW", "COME", "COMES", "CAME",
-      "GET", "GETS", "GOT", "KNOW", "KNOWS", "KNEW", "WORK", "WORKS", "WORKED", "HELP", "HELPS",
-      "HELPED", "PLAY", "PLAYS", "PLAYED", "LEARN", "LEARNS", "LEARNED", "THINK", "THINKS", "THOUGHT",
-      "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER",
-      "OCTOBER", "NOVEMBER", "DECEMBER", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY",
-      "SATURDAY", "SUNDAY", "SUMMER", "AUTUMN", "WINTER", "SPRING"
+      "OTHER", "WORDS", "SAID", "SAY", "SAYS", "DOES", "DID", "DONE",
+      "HAVE", "HAS", "HAD",
+      "WANT", "WANTS", "WANTED",
+      "LIKE", "LIKES", "LIKED",
+      "MAKE", "MAKES", "MADE",
+      "LOOK", "LOOKS", "LOOKED",
+      "GO", "GOES", "WENT",
+      "SEE", "SEES", "SAW",
+      "COME", "COMES", "CAME",
+      "GET", "GETS", "GOT",
+      "KNOW", "KNOWS", "KNEW",
+      "WORK", "WORKS", "WORKED",
+      "HELP", "HELPS", "HELPED",
+      "PLAY", "PLAYS", "PLAYED",
+      "LEARN", "LEARNS", "LEARNED",
+      "THINK", "THINKS", "THOUGHT"
     ]
   },
+
   "2": {
+    "label": "Months",
+    "words": [
+      "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+      "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"
+    ]
+  },
+
+  "3": {
+    "label": "Days of the Week",
+    "words": [
+      "MONDAY", "TUESDAY", "WEDNESDAY",
+      "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"
+    ]
+  },
+
+  "4": {
+    "label": "Seasons",
+    "words": [
+      "SUMMER", "AUTUMN", "WINTER", "SPRING"
+    ]
+  },
+
+  "5": {
     "label": "Verbs",
     "words": [
-      "RUN", "RAN", "RUNNING", "JUMP", "JUMPED", "JUMPING", "WRITE", "WROTE", "WRITING",
-      "READ", "READING", "EAT", "ATE", "EATING", "SEE", "SAW", "SEEING", "PLAY", "PLAYED", "PLAYING",
-      "SING", "SANG", "SINGING", "DRAW", "DREW", "DRAWING", "SWIM", "SWAM", "SWIMMING",
-      "SIT", "SAT", "SITTING", "STAND", "STOOD", "STANDING", "TALK", "TALKED", "TALKING",
-      "CLEAN", "CLEANED", "CLEANING", "HELP", "HELPED", "HELPING", "COOK", "COOKED", "COOKING",
-      "TEACH", "TAUGHT", "TEACHING", "LISTEN", "LISTENED", "LISTENING", "BUILD", "BUILT", "BUILDING",
-      "OPEN", "OPENED", "OPENING", "CLOSE", "CLOSED", "CLOSING", "WAIT", "WAITED", "WAITING",
-      "LOOK", "LOOKED", "LOOKING", "CLAP", "CLAPPED", "CLAPPING", "MOVE", "MOVED", "MOVING",
-      "SHOUT", "SHOUTED", "SHOUTING", "WALK", "WALKED", "WALKING"
+      "RUN", "RAN", "RUNNING",
+      "JUMP", "JUMPED", "JUMPING",
+      "WRITE", "WROTE", "WRITING",
+      "READ", "READING",
+      "EAT", "ATE", "EATING",
+      "SEE", "SAW", "SEEING",
+      "PLAY", "PLAYED", "PLAYING",
+      "SING", "SANG", "SINGING",
+      "DRAW", "DREW", "DRAWING",
+      "SWIM", "SWAM", "SWIMMING",
+      "SIT", "SAT", "SITTING",
+      "STAND", "STOOD", "STANDING",
+      "TALK", "TALKED", "TALKING",
+      "CLEAN", "CLEANED", "CLEANING",
+      "HELP", "HELPED", "HELPING",
+      "COOK", "COOKED", "COOKING",
+      "TEACH", "TAUGHT", "TEACHING",
+      "LISTEN", "LISTENED", "LISTENING",
+      "BUILD", "BUILT", "BUILDING",
+      "OPEN", "OPENED", "OPENING",
+      "CLOSE", "CLOSED", "CLOSING",
+      "WAIT", "WAITED", "WAITING",
+      "LOOK", "LOOKED", "LOOKING",
+      "CLAP", "CLAPPED", "CLAPPING",
+      "MOVE", "MOVED", "MOVING",
+      "SHOUT", "SHOUTED", "SHOUTING",
+      "WALK", "WALKED", "WALKING"
     ]
   },
-  "3": {
+
+  "6": {
     "label": "Phonics",
     "words": [
       "TRAIN", "PAINT", "BEACH", "CLEAN", "STORM", "HORSE", "FARMER", "COIN", "SHOUT", "FLOWER",
       "GROUND", "TOWN", "HOUSE", "SCHOOL", "TEACHER", "PLANT", "RAIN", "LIGHT", "BRIGHT", "MEAL",
-      "FOOD", "BOOK", "LOOK", "FOOT", "MOON", "SPOON", "BRIDGE", "TREE", "FREE", "GREEN",
-      "CHEST", "CHEESE", "PEACH", "PEAR", "BEAR", "ROAD", "LOAD", "TOAD", "COAST", "BOAST",
-      "STREET", "SWEET", "FEET", "HEAT", "MEET", "SEAT", "GREAT", "PLAY", "DAY", "MAY", "WAY",
-      "PAID", "RAINED", "TRAINED", "CHAIN", "BRAIN", "PAINTED", "PAINTING", "SLAIN", "STRAIN",
-      "GLOW", "BLOW", "SNOW", "SHOW", "CLOWN", "DOWN", "CROWN", "ROUND", "FOUND", "GROUND",
-      "MOUTH", "OUTH", "YOUTH", "LOUD", "PROUD", "HOUSE", "MOUSE"
+      "FOOD", "BOOK", "LOOK", "FOOT", "MOON", "SPOON",
+      "BRIDGE", "TREE", "FREE", "GREEN",
+      "CHEST", "CHEESE", "PEACH", "PEAR", "BEAR",
+      "ROAD", "LOAD", "TOAD", "COAST", "BOAST",
+      "STREET", "SWEET", "FEET", "HEAT", "MEET", "SEAT", "GREAT",
+      "PLAY", "DAY", "MAY", "WAY",
+      "PAID", "RAINED", "TRAINED", "CHAIN", "BRAIN",
+      "PAINTED", "PAINTING", "SLAIN", "STRAIN",
+      "GLOW", "BLOW", "SNOW", "SHOW",
+      "CLOWN", "DOWN", "CROWN", "ROUND", "FOUND",
+      "MOUTH", "OUTH", "YOUTH", "LOUD", "PROUD",
+      "MOUSE"
     ]
   },
-  "4": {
+
+  "7": {
     "label": "SA Words",
     "words": [
-      "BRAAI", "TAXI", "TOWNSHIP", "SOCCER", "SCHOOL UNIFORM", "TUCK SHOP", "WEEKEND",
-      "HOLIDAY", "HOMEWORK", "FRIENDS", "FAMILY", "TEACHER", "CLASSROOM", "MARKET", "LIBRARY",
-      "COMMUNITY", "PLAYGROUND", "STREET", "GARDEN", "SHOP", "SUPERMARKET", "SCHOOL BUS",
-      "SPORTS DAY", "AFTERCARE", "PARK", "NEIGHBOURHOOD", "CHURCH", "MOSQUE", "HALL", "FOOTBALL",
-      "RUGBY", "NETBALL", "CRICKET", "SWIMMING POOL", "BUS STOP", "MEDICAL CLINIC", "HOSPITAL",
-      "TRAFFIC LIGHT", "SHOPPING MALL", "POST OFFICE", "COMMUNITY CENTRE", "TOWN HALL",
-      "FARM", "VEGETABLES", "FRUITS", "CHICKEN", "CATTLE", "HORSE", "TRAIN STATION",
-      "STREET LIGHTS", "SIDEWALK", "FOOTPATH", "CROSSING", "TRAFFIC", "POLICE STATION",
-      "FIRE STATION", "LIBRARY", "MUSEUM", "BEACH", "MOUNTAIN", "RIVER", "DAMS"
+      "BRAAI", "TAXI", "TOWNSHIP", "SOCCER", "SCHOOL UNIFORM", "TUCK SHOP",
+      "WEEKEND", "HOLIDAY", "HOMEWORK", "FRIENDS", "FAMILY",
+      "TEACHER", "CLASSROOM", "MARKET", "LIBRARY", "COMMUNITY",
+      "PLAYGROUND", "STREET", "GARDEN", "SHOP", "SUPERMARKET",
+      "SCHOOL BUS", "SPORTS DAY", "AFTERCARE", "PARK", "NEIGHBOURHOOD",
+      "CHURCH", "MOSQUE", "HALL",
+      "FOOTBALL", "RUGBY", "NETBALL", "CRICKET", "SWIMMING POOL",
+      "BUS STOP", "MEDICAL CLINIC", "HOSPITAL",
+      "TRAFFIC LIGHT", "SHOPPING MALL", "POST OFFICE",
+      "COMMUNITY CENTRE", "TOWN HALL",
+      "FARM", "VEGETABLES", "FRUITS", "CHICKEN", "CATTLE", "HORSE",
+      "TRAIN STATION", "STREET LIGHTS", "SIDEWALK", "FOOTPATH",
+      "CROSSING", "TRAFFIC", "POLICE STATION", "FIRE STATION",
+      "MUSEUM", "BEACH", "MOUNTAIN", "RIVER", "DAMS"
     ]
   }
 }
